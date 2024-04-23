@@ -4,7 +4,7 @@ import TourNavigator from 'tour-navigator'
 import { TourNavigatorProps, HelperProps } from 'tour-navigator/lib/TourNavigator/types'
 
 
-interface MultiRouteTourProps extends TourNavigatorProps{
+export interface MultiRouteTourProps extends TourNavigatorProps{
   nextStepCount?: number;
   nextStepRoute?: string;
   number?: number;
