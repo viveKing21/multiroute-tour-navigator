@@ -1,6 +1,6 @@
 {
   "name": "multiroute-tour-navigator",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Multiroute Tour Navigator builds on Tour Navigator's foundation, enabling the creation of dynamic, multi-step tours for React websites.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
