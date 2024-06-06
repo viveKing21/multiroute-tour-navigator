@@ -1,5 +1,5 @@
-import React, { ReactNode, useMemo, useRef } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react'
+import { Location, NavigateFunction } from 'react-router-dom';
 import TourNavigator from 'tour-navigator'
 import { TourNavigatorProps, HelperProps } from 'tour-navigator/lib/TourNavigator/types'
 
@@ -8,6 +8,8 @@ export interface MultiRouteTourProps extends TourNavigatorProps{
   nextStepCount?: number;
   nextStepRoute?: string;
   number?: number;
+  navigate: NavigateFunction;
+  location: Location;
   replace?: boolean
 }
 
@@ -19,11 +21,12 @@ export default function MultiRouteTour({
   nextStepRoute,
   number,
   replace = true,
+  navigate,
+  location,
   ...props
 }: MultiRouteTourProps) {
 
-  const navigate = useNavigate()
-  const { state, pathname } = useLocation()
+  const { state, pathname } = location
   
   const __multiRouteTour: Array<any> = state?.__multiRouteTour || []
   const lastState = __multiRouteTour[__multiRouteTour.length-1]
