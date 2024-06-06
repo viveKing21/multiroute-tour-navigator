@@ -1,5 +1,4 @@
 import { useMemo } from 'react'
-import { Location, NavigateFunction } from 'react-router-dom';
 import TourNavigator from 'tour-navigator'
 import { TourNavigatorProps, HelperProps } from 'tour-navigator/lib/TourNavigator/types'
 
@@ -8,9 +7,8 @@ export interface MultiRouteTourProps extends TourNavigatorProps{
   nextStepCount?: number;
   nextStepRoute?: string;
   number?: number;
-  navigate: NavigateFunction;
-  location: Location;
-  replace?: boolean
+  state?: Array<any>;
+  onNavigate?: (route: string, state: Array<any>) => void
 }
 
 export default function MultiRouteTour({
@@ -20,15 +18,15 @@ export default function MultiRouteTour({
   nextStepCount = 0,
   nextStepRoute,
   number,
-  replace = true,
-  navigate,
-  location,
+  state,
+  onNavigate,
   ...props
 }: MultiRouteTourProps) {
 
-  const { state, pathname } = location
+  const pathname = window.location.pathname
+  const search = window.location.search
   
-  const __multiRouteTour: Array<any> = state?.__multiRouteTour || []
+  const __multiRouteTour: Array<any> = state || []
   const lastState = __multiRouteTour[__multiRouteTour.length-1]
   const currentStateIndex = number == undefined ? (__multiRouteTour.length - (lastState?.id == id ? 1:0)):number-1;
   const previousStateIndex = currentStateIndex - 1
@@ -40,7 +38,7 @@ export default function MultiRouteTour({
     currentState = {
       id,
       focusAt: (previousState?.previousStepCount + previousState?.stepCount + startAt) || 0,
-      stepRoute: pathname,
+      stepRoute: pathname + search,
       stepCount: steps.length,
       previousStepCount: (previousState?.previousStepCount + previousState?.stepCount) || 0,
       previousStepRoute: previousState?.stepRoute || null,
@@ -62,12 +60,7 @@ export default function MultiRouteTour({
     if(nextStepRoute && isLast){
       let newState = [...__multiRouteTour]
       if(lastState?.id != id) newState.push(currentState)
-      navigate(nextStepRoute, {
-        state: {
-          __multiRouteTour: newState
-        },
-        replace
-      })
+      onNavigate?.(nextStepRoute, newState)
     }else{
       currentState.focusAt = helperProps.currentStepIndex
       props.onNext?.(helperProps)
@@ -77,10 +70,7 @@ export default function MultiRouteTour({
   const handlePrev = (helperProps: HelperProps) => {
     const isFirst = helperProps.currentStepIndex == (currentState.previousStepCount - 1)
     if(previousState && isFirst){
-      navigate(currentState.previousStepRoute, {
-        state: {__multiRouteTour: __multiRouteTour.filter(item => item.id != id)},
-        replace
-      })
+      onNavigate?.(currentState.previousStepRoute, __multiRouteTour.filter(item => item.id != id))
     }else{
       currentState.focusAt = helperProps.currentStepIndex
       props.onPrev?.(helperProps)
