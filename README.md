@@ -1,33 +1,37 @@
 # MultiRoute Tour Navigator
 
-MultiRoute Tour Navigator is a React component that extends the functionality of Tour Navigator by providing the ability to create multi-route tours for React websites. It utilizes react-router-dom for navigation between routes and requires Tour Navigator to be installed alongside this package.
+MultiRoute Tour Navigator is a React component that extends the functionality of Tour Navigator by providing the ability to create multi-route tours for React websites. Tour Navigator to be installed alongside this package.
 
 ## Installation
 
-To use MultiRoute Tour Navigator, make sure you have `react-router-dom` and `tour-navigator` installed in your project:
+To use MultiRoute Tour Navigator, make sure you have `tour-navigator` installed in your project:
 
 ```bash
-npm install react-router-dom tour-navigator multiroute-tour-navigator
+npm install tour-navigator multiroute-tour-navigator
 # or
-yarn add react-router-dom tour-navigator multiroute-tour-navigator
+yarn add tour-navigator multiroute-tour-navigator
 ```
 
 ## Usage
 Import MultiRouteTour from multiroute-tour-navigator and use it in your React components to define multi-route tours.
 ```javascript
 import { MultiRouteTour } from 'multiroute-tour-navigator';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useHistory } from 'react-router-dom';
 
 const MyComponent = () => {
-  const history = useHistory();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   return (
     <MultiRouteTour
       id="my-tour"
       steps={[ /* Array of steps */ ]}
+      state={location?.state?.tour} // we won't have state for first page
       nextStepRoute="/about"
+      onNavigate={(route, state) => navigate(route, {state: {tour: state}, replace: true}) //  include state while navigating
       nextStepCount={4}
-      number={1}
+      number={2}
     />
   );
 };
@@ -40,8 +44,11 @@ const MyComponent = () => {
 | nextStepCount      | number  | Number of steps after transitioning to the next route.                                             |
 | nextStepRoute      | string  | Route to navigate to after completing the current tour on this route.                              |
 | number             | number  | Number representing the current route in the multi-route tour. If not provided, it will automatically take the next route in sequence. |
-| replace            | boolean | Whether to replace the current route in history while navigating. Default: false.                 |
+| replace            | boolean | Whether to replace the current route in history while navigating. Default: false.                  |
+| state              | array   | State from previous tour page                                                
+| onNavigate         | (route, state) => {}   | Function invokes when tour is completed for current page pass state while navigate to next tour. |
 | ...                | -       | Other props from TourNavigatorProps                                                                |
+
 
 ## License
 
