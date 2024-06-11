@@ -47,8 +47,28 @@ const MyComponent = () => {
 | replace            | boolean | Whether to replace the current route in history while navigating. Default: false.                  |
 | state              | array   | State from previous tour page                                                
 | onNavigate         | (route, state) => {}   | Function invokes when tour is completed for current page pass state while navigate to next tour. |
+| ref                | 
 | ...                | -       | Other props from TourNavigatorProps                                                                |
 
+
+### MultiRouteTourRefProps
+
+```typescript
+interface MultiRouteTourRefProps {
+  id: string;
+  currentStep: Step | null;
+  target: HTMLElement | null;
+  currentStepIndex: number;
+  previousStepIndex: number;
+  steps: Step[] | null;
+  isScrollingIntoView: boolean;
+  focus: (scrollBehavior?: 'auto' | 'smooth') => void;
+  goto: (stepIndex: number) => void;
+  next: () => void;
+  prev: () => void;
+  onRequestClose: (params: { event: MouseEvent | PointerEvent; isMask: boolean; isOverlay: boolean }) => void;
+}
+```
 
 ## License
 

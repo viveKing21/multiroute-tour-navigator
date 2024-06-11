@@ -1,6 +1,6 @@
-import { useMemo } from 'react'
+import { forwardRef, useImperativeHandle, useMemo, useRef } from 'react'
 import TourNavigator from 'tour-navigator'
-import { TourNavigatorProps, HelperProps } from 'tour-navigator/lib/TourNavigator/types'
+import { TourNavigatorProps, HelperProps, Step } from 'tour-navigator/lib/TourNavigator/types'
 
 
 export interface MultiRouteTourProps extends TourNavigatorProps{
@@ -11,7 +11,22 @@ export interface MultiRouteTourProps extends TourNavigatorProps{
   onNavigate?: (route: string, state: Array<any>) => void
 }
 
-export default function MultiRouteTour({
+export interface MultiRouteTourRefProps {
+  id: string;
+  currentStep: Step | null;
+  target: HTMLElement | null;
+  currentStepIndex: number;
+  previousStepIndex: number;
+  steps: Step[] | null;
+  isScrollingIntoView: boolean;
+  focus: (scrollBehavior?: 'auto' | 'smooth') => void;
+  goto: (stepIndex: number) => void;
+  next: () => void;
+  prev: () => void;
+  onRequestClose: (params: { event: MouseEvent | PointerEvent; isMask: boolean; isOverlay: boolean }) => void;
+}
+
+const MultiRouteTour = forwardRef<MultiRouteTourRefProps, MultiRouteTourProps>(({
   id,
   steps,
   startAt = TourNavigator.defaultProps.startAt || 0,
@@ -21,7 +36,9 @@ export default function MultiRouteTour({
   state,
   onNavigate,
   ...props
-}: MultiRouteTourProps) {
+}, ref) => {
+  
+  const tourRef = useRef<TourNavigator>(null)
 
   const pathname = window.location.pathname
   const search = window.location.search
@@ -77,6 +94,35 @@ export default function MultiRouteTour({
     }
   }
 
+  useImperativeHandle(ref, () => ({
+    get id() {
+      return tourRef.current?.props.id ?? '';
+    },
+    get currentStep() {
+      return tourRef.current?.currentStep ?? null;
+    },
+    get target() {
+      return tourRef.current?.currentElement ?? null;
+    },
+    get currentStepIndex() {
+      return tourRef.current?.currentStepIndex ?? 0;
+    },
+    get previousStepIndex() {
+      return tourRef.current?.state.previousStepIndex ?? -1;
+    },
+    get steps() {
+      return tourRef.current?.props.steps ?? TourNavigator.defaultProps.steps ?? null;
+    },
+    get isScrollingIntoView() {
+      return tourRef.current?.state.isScrollingIntoView ?? false;
+    },
+    focus: (scrollBehavior = 'auto') => tourRef.current?.focus(scrollBehavior),
+    goto: (stepIndex) => tourRef.current?.goto(stepIndex),
+    next: () => tourRef.current?.next(),
+    prev: () => tourRef.current?.prev(),
+    onRequestClose: (params) => tourRef.current?.props.onRequestClose?.(params)
+  }), [tourRef])
+
   if(currentStateIndex != 0 && !previousState) return null;
   return (
     <TourNavigator
@@ -86,6 +132,9 @@ export default function MultiRouteTour({
       startAt={currentState.focusAt}
       onNext={handleNext}
       onPrev={handlePrev}
+      ref={tourRef}
     />
   )
-}
+})
+
+export default MultiRouteTour
