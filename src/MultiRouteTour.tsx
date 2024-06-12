@@ -27,7 +27,7 @@ export interface MultiRouteTourRefProps {
 }
 
 const MultiRouteTour = forwardRef<MultiRouteTourRefProps, MultiRouteTourProps>(({
-  id,
+  id = TourNavigator.defaultProps.id,
   steps,
   startAt = TourNavigator.defaultProps.startAt || 0,
   nextStepCount = 0,
@@ -54,7 +54,7 @@ const MultiRouteTour = forwardRef<MultiRouteTourRefProps, MultiRouteTourProps>((
   if(currentState?.id != id){
     currentState = {
       id,
-      focusAt: (previousState?.previousStepCount + previousState?.stepCount + startAt) || 0,
+      focusAt: ((previousState?.previousStepCount + previousState?.stepCount) || 0) + startAt,
       stepRoute: pathname + search,
       stepCount: steps.length,
       previousStepCount: (previousState?.previousStepCount + previousState?.stepCount) || 0,
