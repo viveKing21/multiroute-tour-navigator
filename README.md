@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="./assets/multiroute-tour-navigator-hero.svg" alt="tour-navigator" width="100%"/>
+</div>
+
 # MultiRoute Tour Navigator
 
 MultiRoute Tour Navigator is a React component that extends the functionality of Tour Navigator by providing the ability to create multi-route tours for React websites. Tour Navigator to be installed alongside this package.
